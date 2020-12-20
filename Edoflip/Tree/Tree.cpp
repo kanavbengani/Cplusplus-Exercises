@@ -51,8 +51,8 @@ void printLevelWise(TreeNode<int> *root)
     while (!q.empty())
     {
         TreeNode<int> *front;
-        int sz = q.size();
-        for (int i = 0; i < sz; i++)
+        int size = q.size();
+        for (int i = 0; i < size; i++)
         {
             front = q.front();
             q.pop();
@@ -63,6 +63,43 @@ void printLevelWise(TreeNode<int> *root)
             }
         }
         cout << endl;
+    }
+}
+
+void printLevel(TreeNode<int> *root, int level)
+{
+    queue<TreeNode<int> *> q;
+    q.push(root);
+    for (int i = 0; i < level; i++)
+    {
+        TreeNode<int> *front;
+        int size = q.size();
+        for (int j = 0; j < size; j++)
+        {
+            front = q.front();
+            q.pop();
+            if (i == level - 1)
+            {
+                cout << front->data << " ";
+            }
+            for (int k = 0; k < front->children.size(); k++)
+            {
+                q.push(front->children.at(k));
+            }
+        }
+        cout << endl;
+    }
+}
+
+void printLevelUsingRec(TreeNode<int> *root, int level)
+{
+    if (level == 1)
+    {
+        cout << root->data << endl;
+    }
+    for (int i = 0; i < root->children.size(); i++)
+    {
+        printLevelUsingRec(root->children.at(i), level - 1);
     }
 }
 
@@ -101,8 +138,64 @@ TreeNode<int> *takeInput()
     return root;
 }
 
+int numNodes(TreeNode<int> *root)
+{
+    int answer = 1;
+    for (int i = 0; i < root->children.size(); i++)
+    {
+        answer += numNodes(root->children.at(i));
+    }
+    return answer;
+}
+
+int sumNodes(TreeNode<int> *root)
+{
+    int answer = root->data;
+    for (int i = 0; i < root->children.size(); i++)
+    {
+        answer += sumNodes(root->children.at(i));
+    }
+    return answer;
+}
+
+TreeNode<int> *maxNode(TreeNode<int> *root)
+{
+    TreeNode<int> *answer = root;
+    for (int i = 0; i < root->children.size(); i++)
+    {
+        TreeNode<int> *childrenData = maxNode(root->children.at(i));
+        childrenData->data > answer->data ? answer->data = childrenData->data : answer->data = answer->data;
+    }
+    return root;
+}
+
+int numLeafNodes(TreeNode<int> *root)
+{
+    int count = 0;
+    if (root->children.empty())
+    {
+        count += 1;
+    }
+    for (int i = 0; i < root->children.size(); i++)
+    {
+        count += numLeafNodes(root->children.at(i));
+    }
+    return count;
+}
+
+void deleteTree(TreeNode<int> *root)
+{
+    for (int i = 0; i < root->children.size(); i++)
+    {
+        deleteTree(root->children.at(i));
+    }
+    delete root;
+}
+
 int main()
 {
-    printLevelWise(takeInputLevelWise());
+    int level;
+    cin >> level;
+    printLevelUsingRec(takeInputLevelWise(), level);
     // print(takeInput());
 }
